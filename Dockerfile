@@ -1,14 +1,11 @@
-FROM golang:alpine AS buildenv
-
-COPY . /go/src/go-crond
-WORKDIR /go/src/go-crond
-
-RUN apk --no-cache add git \
-    && go get \
-    && go build \
-    && chmod +x go-crond \
-    && ./go-crond --version
-
 FROM alpine
-COPY --from=buildenv /go/src/go-crond/go-crond /usr/local/bin
+
+RUN apk --no-cache add --virtual .gocrond-deps \
+        ca-certificates  \
+        wget \
+    && GOCROND_RELEASE=0.6.1 \
+    && wget -O /usr/local/bin/go-crond https://github.com/webdevops/go-crond/releases/download/$GOCROND_RELEASE/go-crond-64-linux \
+    && chmod +x /usr/local/bin/go-crond \
+    && apk del .gocrond-deps
+
 CMD ["go-crond"]
