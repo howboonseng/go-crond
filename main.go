@@ -370,8 +370,12 @@ func main() {
 	LoggerInfo.Printf("Starting %s version %s", Name, Version)
 
 	// check if user switching is possible (have to be root)
-	opts.EnableUserSwitching = true
+	opts.EnableUserSwitching = false
+	LoggerError.Println("WARNING: go-crond is NOT running as root, disabling user switching")
 	currentUser, err := user.Current()
+	
+	// disable user switching
+	/*
 	if err != nil || currentUser.Uid != "0" {
 		if opts.AllowUnprivileged {
 			LoggerError.Println("WARNING: go-crond is NOT running as root, disabling user switching")
@@ -381,6 +385,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
+	*/
 
 	// get current path
 	confDir, err := os.Getwd()
